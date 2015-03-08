@@ -12,11 +12,19 @@ Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (n
 Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname, first-name, last-name...).
 
 == Installation ==
-Upload custom-upload-folders-plus.zip to the /wp-content/plugins/ directory via FTP.
-Activate the plugin through the Plugins menu in WordPress.
-Go to Settings -> Media and set the desired folder structure.
 
-Uninstall
+**From Your WordPress Dashboard**
+Visit 'Plugins -> Add New'
+Search for 'Custom Upload Folders Plus'
+Activate 'Custom Upload Folders Plus' from your Plugins page.
+Visit 'Settings ->  Media'
+
+**Download - Custom Upload Folders Plus.**
+Unzip and upload the 'Custom Upload Folders Plus' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
+Activate 'Custom Upload Folders Plus' from your Plugins page.
+Visit 'Settings ->  Media'
+
+**Uninstall**
 The plugin option will be deleted via unsinstall.php.
 
 == Screenshots ==
