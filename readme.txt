@@ -1,5 +1,5 @@
 === Custom Upload Folders Plus ===
-Contributors: Rodolfo Buaiz
+Contributors: John Wight
 Tags: media, upload, folder, custom upload folders
 Requires at least: 3.8
 Tested up to: 4.1
