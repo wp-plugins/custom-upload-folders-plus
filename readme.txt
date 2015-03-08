@@ -19,7 +19,7 @@ Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (n
 3. Activate 'Custom Upload Folders Plus' from your Plugins page.  
 4. Visit 'Settings ->  Media'  
 
-**From WordPress.org**
+**From WordPress.org**  
 1. Download Custom Upload Folders Plus  
 2. Unzip and upload the 'Custom Upload Folders Plus' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)  
 3. Activate 'Custom Upload Folders Plus' from your Plugins page.  
