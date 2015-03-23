@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Custom Upload Folders Plus
- * Plugin URI: 
+ * Plugin URI:
  * Description: Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname,first-name last-name...).
  * Version: 1.0
  * Author: John Wight
@@ -9,13 +9,13 @@
  * Text Domain: jwcuf
  * Domain Path: /languages/
  * License: GPLv2 or later
- * Contributor: Rodolfo Buaiz 
- * 
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU 
- * General Public License version 2, as published by the Free Software Foundation.  You may NOT assume 
+ * Contributor: Rodolfo Buaiz
+ *
+ * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License version 2, as published by the Free Software Foundation.  You may NOT assume
  * that you can use any other version of the GPL.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without 
+ * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
  * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  */
 
@@ -32,7 +32,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public $plugin_url = '';
 
-		
+
 		/**
 		 * Path to this plugin's directory.
 		 *
@@ -70,19 +70,19 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				'wp_handle_upload',
 				array( $this, 'handle_upload' )
 			);
-			
-			add_filter( 
+
+			add_filter(
 				'admin_init' ,
-				array( $this, 'register_fields' ) 
+				array( $this, 'register_fields' )
 			);
-			add_filter( 
-				'plugin_action_links',  
-				array( $this, 'settings_plugin_link' ), 
-				10, 
-				2 
+			add_filter(
+				'plugin_action_links',
+				array( $this, 'settings_plugin_link' ),
+				10,
+				2
 			);
 			add_action(
-				'admin_enqueue_scripts', 
+				'admin_enqueue_scripts',
 				array($this , 'jwcuf_load_scripts')
 			);
 
@@ -92,7 +92,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		/**
 		 * CUSTOM UPLOAD DIR
 		 * Change upload folder
-		 * 
+		 *
 		 * @param type $file
 		 * @return type
 		 */
@@ -102,11 +102,11 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			return $file;
 		}
 
-		
+
 		/**
 		 * CUSTOM UPLOAD DIR
 		 * Remove upload folder filter
-		 * 
+		 *
 		 * @param type $fileinfo
 		 * @return type
 		 */
@@ -118,7 +118,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		/**
 		 * CUSTOM UPLOAD DIR
 		 * Organize the Uploads Folder
-		 * 
+		 *
 		 * @param type $path
 		 * @return string
 		 */
@@ -131,9 +131,9 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			$custom_dir = '';
 			$select = get_option( 'jwcuf_select' );
-			
+
 			if ($select != -1) {
-				
+
 				$folder_default = (get_option( 'jwcuf_default_folder_name' )) ? get_option( 'jwcuf_default_folder_name' ) : 'general' ;
 				$uploads_use_yearmonth_folders  = get_option('uploads_use_yearmonth_folders ');
 
@@ -152,7 +152,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 						foreach ($file_types as $key => $value) {
 							$array = explode(",", $value);
-							
+
 							if ( in_array( $extension, $array) ) {
 								$custom_dir = '/' . $key;
 								break;
@@ -160,7 +160,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 								$custom_dir = '/'. $folder_default;
 							}
 						}
-						
+
 						break;
 					default:
 						$custom_dir = '/'. $folder_default;
@@ -173,12 +173,12 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 					$path['subdir']  = $custom_dir;
 					$path['path']   .= $custom_dir;
 					$path['url']    .= $custom_dir;
-				
+
 				}else {
 					$path['path']    = str_replace( $path['subdir'], '', $path['path'] );
 					$path['url']     = str_replace( $path['subdir'], '', $path['url'] );
 					$path['subdir']  = $custom_dir;
-					$path['path']   .= $custom_dir; 
+					$path['path']   .= $custom_dir;
 					$path['url']    .= $custom_dir;
 				}
 			}
@@ -189,13 +189,13 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		/**
 		 * Add settings to wp-admin/options-general.php page
 		 */
-		public function register_fields() 
+		public function register_fields()
 		{
 			register_setting( 'media', 'jwcuf_select', 'esc_attr' );
 			register_setting( 'media', 'jwcuf_user_folder_name', array( $this, 'validate_folder_builder') );
 			register_setting( 'media', 'jwcuf_file_types', array( $this, 'validate_file_types'));
 			register_setting( 'media', 'jwcuf_default_folder_name', array( $this, 'validate_folder_name_default') );
-			
+
 
 			add_settings_field(
 				'jwcuf_settings',
@@ -260,7 +260,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public function validate_file_types($input){
 
-			
+
 			$select = get_option( 'jwcuf_select' );
 
 			if ($select == "by_file_type") {
@@ -281,7 +281,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 		}
 
-		
+
 		/**
 		 * Settings Options
 		 */
@@ -290,29 +290,29 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			$select = get_option( 'jwcuf_select' );
 			$folder_name = get_option( 'jwcuf_user_folder_name' );
 			$folder_name_default = get_option( 'jwcuf_default_folder_name' );
-			
+
 			$show_hide_by_user = ($select == "by_user") ? 'jwcuf-show' : 'jwcuf-hide' ;
 			$show_hide_by_file_type = ($select == "by_file_type") ? 'jwcuf-show' : 'jwcuf-hide' ;
-			
-			$select_options = array( 
+
+			$select_options = array(
 				'-1'			=> __( '-none-', 'jwcuf' ),
-				'by_user'		=> __( 'By Logged in User', 'jwcuf' ), 
+				'by_user'		=> __( 'By Logged in User', 'jwcuf' ),
 				'by_file_type'	=> __( 'By File Type', 'jwcuf' )
 			);
-			
+
 			$selected = selected( '', $select, false );
 
 			?>
-			
-			<select id="jwcuf-select" name="jwcuf_select">			
+
+			<select id="jwcuf-select" name="jwcuf_select">
 			<?php foreach( $select_options as $key => $value ): $selected = selected( $key, $select, false );?>
 				<option value="<?php echo $key; ?>" <?php echo $selected; ?> ><?php echo $value; ?></option>
 			<?php endforeach; ?>
-			
+
 			</select>
 
 			<div id="jwcuf-by-user-group" class="<?php echo $show_hide_by_user; ?>">
-				
+
 				<table id="jwcuf-by-user-input" class="jwcuf-table widefat">
 					<tbody>
 						<tr>
@@ -333,7 +333,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				</table>
 			</div>
 
-			<?php $file_types = (get_option( 'jwcuf_file_types' )) ? get_option( 'jwcuf_file_types' ) : [] ; ?>
+			<?php $file_types = (get_option( 'jwcuf_file_types' )) ? get_option( 'jwcuf_file_types' ) : null ?>
 
 			<div id="jwcuf-by-file-type-group" class="<?php echo $show_hide_by_file_type; ?>">
 
@@ -344,7 +344,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 							<th>Select Extentions</th>
 						</tr>
 						<tr>
-							<td width="50%">					
+							<td width="50%">
 								<input class="widefat" type="text">
 							</td>
 							<td width="50%">
@@ -355,15 +355,17 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				</table>
 
 				<button id="jwcuf-add-folder-btn" data-pos="0" class="button">Add Folder</button>
-				
+
 				<br />
-				
+
 				<table id="jwcuf-extension-list" class="jwcuf-table wp-list-table widefat">
 					<tbody>
 						<tr>
 							<th>Folder Path</th>
 							<th>Selected Extentions</th>
 						</tr>
+
+					<?php if ($file_types != null): ?>
 						<?php if(count($file_types) > 0): ?>
 							<?php foreach ($file_types as $key => $value): ?>
 								<tr id="jwcuf-<?php echo $key; ?>">
@@ -382,6 +384,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 								</tr>
 							<?php endforeach; ?>
 						<?php endif; ?>
+					<?php endif ?>
 					</tbody>
 				</table>
 				<hr>
@@ -392,8 +395,8 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 						</tr>
 						<tr>
 							<td width="100%">
-								<input class="widefat" name="jwcuf_default_folder_name" value="<?php echo $folder_name_default; ?>" type="text">					
-								
+								<input class="widefat" name="jwcuf_default_folder_name" value="<?php echo $folder_name_default; ?>" type="text">
+
 							</td>
 						</tr>
 						<tr>
@@ -404,7 +407,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 					</tbody>
 				</table>
 			</div>
-			
+
 			<!-- this is the template for the js add button -->
 			<tr id="jwcuf-template">
 				<td>
@@ -422,50 +425,50 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			</tr>
 
 			<?php
-			
+
 		}
 
-		
+
 		/**
 		 * Add settings link to plugin action row
-		 * 
+		 *
 		 * @param type $links
 		 * @param type $file
 		 * @return type
 		 */
-		public function settings_plugin_link( $links, $file ) 
+		public function settings_plugin_link( $links, $file )
 		{
-			if ( $file == plugin_basename( dirname(__FILE__) . '/custom-upload-folders-plus.php' ) ) 
+			if ( $file == plugin_basename( dirname(__FILE__) . '/custom-upload-folders-plus.php' ) )
 			{
 				$in = '<a href="options-media.php">' . __( 'Settings', 'jwcuf' ) . '</a>';
 				array_unshift( $links, $in );
 			}
 			return $links;
-		} 
+		}
 
 		/**
 		 * Add scripts to media admin pages /wp-admin/options-media.php
-		 * 
+		 *
 		 * @param type $scripts
 		 * @param type $file
 		 * @return type
 		 */
 		public function jwcuf_load_scripts($hook) {
-	 
+
 			if( $hook == "options-media.php" ){
-				
+
 				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.css' );
 				wp_enqueue_style( 'styles-css',		$this->plugin_url . 'css/styles.css' );
 				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery'), '1.0.0', true );
-				
+
 				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','select2-js'), '1.0.0', true );
 				wp_localize_script( 'scripts-js',	'select2_user_data', $this->get_select2_user_data() );
 				wp_localize_script( 'scripts-js',	'select2_used_mime_types', $this->get_select2_used_mime_types());
 				wp_localize_script( 'scripts-js',	'select2_allowed_mime_types', $this->get_select2_allowed_mime_types());
-				
+
 				wp_enqueue_script( 'scripts-js');
 			}
-			
+
 		}
 
 		/**
@@ -487,16 +490,16 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				foreach ($array as $value) {
 
 					if ($value) {
-					
+
 						$dash = strstr($value,'dash');
 						$underscore = strstr($value,'underscore');
-						
+
 						if ($dash) {
 							$build_path .= '-';
-						
+
 						}else if ($underscore) {
 							$build_path .= '_';
-						
+
 						}else {
 							$build_path .= $current_user->$value;
 						}
@@ -518,7 +521,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		public function get_select2_user_data(){
 
 			$current_user = wp_get_current_user();
-			
+
 			// select2 select options for user data
 			$current_user_options = array(
 				array('text' => 'User Data', 'children' => 	array(
@@ -535,24 +538,24 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				)
 			);
 
-			
+
 			// remove any user data that is not present/empty in the Users -> your profile page
 			// if the user data is emty in the Users -> your profile page then this function take them out.
-			
+
 			for ($r=0; $r < count($current_user_options[0]['children']); $r++) {
-				
+
 				if($current_user_options[0]['children'][$r]['preview'] == ''){
 					unset($current_user_options[0]['children'][$r]);
-				}; 				
+				};
 			}
 
 			//resets array keys, if they are unset/out of order it will break select2 js obj
 
-			$temp = $current_user_options[0]['children']; 
-			$current_user_options[0]['children'] = array(); 
-			
-			foreach($temp as $value) { 
-				$current_user_options[0]['children'][] = $value;  
+			$temp = $current_user_options[0]['children'];
+			$current_user_options[0]['children'] = array();
+
+			foreach($temp as $value) {
+				$current_user_options[0]['children'][] = $value;
 			}
 
 			return $current_user_options;
@@ -566,11 +569,11 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public function get_select2_used_mime_types(){
 
-			$file_types = get_option( 'jwcuf_file_types' );
-			$array = [];
-			$return_array = [];
+			$file_types = (get_option( 'jwcuf_file_types' )) ? get_option( 'jwcuf_file_types' ) : null;
+			$array = array();
+			$return_array = array();
 
-			if ($file_types) {			
+			if ($file_types || $file_types != null) {
 
 				foreach ($file_types as $key => $value) {
 					$array = explode(",", $value);
@@ -581,11 +584,11 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				}
 
 			}else {
-				$return_array = [];
+				$return_array = array();
 			}
 
-			return $return_array; 
-			
+			return $return_array;
+
 		}
 		/**
 		 * Get saved file extensions being used.
@@ -596,8 +599,8 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		public function get_select2_allowed_mime_types(){
 
 			$file_types = get_allowed_mime_types();
-			$array = [];
-			$return_array = [];
+			$array = array();
+			$return_array = array();
 
 			foreach ($file_types as $key => $value) {
 				$array = explode("|", $key);
@@ -607,7 +610,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				}
 			}
 
-			return $return_array; 
+			return $return_array;
 		}
 
 
@@ -615,7 +618,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 * Loads translation file.
 		 *
 		 * Accessible to other classes to load different language files (admin and
-		 * front-end for example). 
+		 * front-end for example).
 		 *
 		 * @wp-hook init
 		 * @param   string $domain
@@ -629,7 +632,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			load_textdomain(
 					$domain, WP_LANG_DIR . '/plugins/custom-upload-folders-plus/' . $domain . '-' . $locale . '.mo'
 			);
-			
+
 			load_plugin_textdomain(
 					$domain, FALSE, $this->plugin_slug . '/languages'
 			);
