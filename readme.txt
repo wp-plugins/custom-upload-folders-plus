@@ -13,19 +13,19 @@ Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (n
 
 == Installation ==
 
-**From Your WordPress Dashboard**  
-1. Visit 'Plugins -> Add New'  
-2. Search for 'Custom Upload Folders Plus'  
-3. Activate 'Custom Upload Folders Plus' from your Plugins page.  
-4. Visit 'Settings ->  Media'  
+**From Your WordPress Dashboard**
+1. Visit 'Plugins -> Add New'
+2. Search for 'Custom Upload Folders Plus'
+3. Activate 'Custom Upload Folders Plus' from your Plugins page.
+4. Visit 'Settings ->  Media'
 
-**From WordPress.org**  
-1. Download Custom Upload Folders Plus  
-2. Unzip and upload the 'Custom Upload Folders Plus' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)  
-3. Activate 'Custom Upload Folders Plus' from your Plugins page.  
-4. Visit 'Settings ->  Media'  
+**From WordPress.org**
+1. Download Custom Upload Folders Plus
+2. Unzip and upload the 'Custom Upload Folders Plus' directory to your '/wp-content/plugins/' directory, using your favorite method (ftp, sftp, scp, etc...)
+3. Activate 'Custom Upload Folders Plus' from your Plugins page.
+4. Visit 'Settings ->  Media'
 
-**Uninstall**  
+**Uninstall**
 The plugin option will be deleted via unsinstall.php.
 
 == Screenshots ==
@@ -35,3 +35,5 @@ The plugin option will be deleted via unsinstall.php.
 == Changelog ==
 Version 1.0
 Plugin Launched
+
+Fix bug: "Parse error: syntax error, unexpected '['"
