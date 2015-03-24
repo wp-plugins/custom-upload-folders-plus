@@ -3,7 +3,7 @@
  * Plugin Name: Custom Upload Folders Plus
  * Plugin URI:
  * Description: Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname,first-name last-name...).
- * Version: 1.0
+ * Version: 1.0.1
  * Author: John Wight
  * Author URI: http://wight-space.com/
  * Text Domain: jwcuf
