@@ -9,7 +9,7 @@
  * Text Domain: jwcuf
  * Domain Path: /languages/
  * License: GPLv2 or later
- * Contributor: John Wight
+ * Contributor: Rodolfo Buaiz
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation.  You may NOT assume
@@ -196,7 +196,8 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			register_setting( 'media', 'jwcuf_file_types', array( $this, 'validate_file_types'));
 			register_setting( 'media', 'jwcuf_default_folder_name', array( $this, 'validate_folder_name_default') );
 
-			add_settings_field('jwcuf_settings', 'Custom Upload Folders', array( $this, 'jwcuf_settings_page' ), 'media');
+			add_settings_field('jwcuf_settings', 'Custom Upload Folders', array( $this, 'jwcuf_settings_page' ), 'media', 'uploads');
+
 		}
 
 		/**
