@@ -3,13 +3,13 @@
  * Plugin Name: Custom Upload Folders Plus
  * Plugin URI:
  * Description: Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname,first-name last-name...).
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: John Wight
  * Author URI: http://wight-space.com/
  * Text Domain: jwcuf
  * Domain Path: /languages/
  * License: GPLv2 or later
- * Contributor: Rodolfo Buaiz
+ * Contributor: John Wight
  *
  * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
  * General Public License version 2, as published by the Free Software Foundation.  You may NOT assume
@@ -456,7 +456,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.min.css' );
 				wp_enqueue_style( 'styles-css',		$this->plugin_url . 'css/styles.css' );
-				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery','jquery-ui-sortable'), '1.0.0', true );				
+				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery','jquery-ui-sortable'), '1.0.0', true );
 
 				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','jquery-ui-sortable','select2-js'), '1.0.0', true );
 				wp_localize_script( 'scripts-js',	'select2_user_data', $this->get_select2_user_data() );
@@ -579,7 +579,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			$dash_count = 0;
 			$underscore_count = 0;
 
-			for ($q = 0; $q < count($user_folder_name); $q++) { 
+			for ($q = 0; $q < count($user_folder_name); $q++) {
 
 				$dash = strstr($user_folder_name[$q],'dash');
 				$underscore = strstr($user_folder_name[$q],'underscore');
@@ -587,30 +587,30 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 				if ($dash) {
 					$return_array[] = array('id' => 'dash_'. $dash_count , 'text' => __( 'dash: -', 'jwcuf'), 'preview' => '-');
 					$dash_count++;
-					
+
 				}elseif($underscore){
 					$return_array[] = array('id' => 'underscore_' . $underscore_count, 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_');
 					$underscore_count++;
-					
+
 				}else {
 
 					for($r = 0; $r < count($current_user_options[0]['children']); $r++) {
 
-						if($current_user_options[0]['children'][$r]['id'] == $user_folder_name[$q]){						
-							
+						if($current_user_options[0]['children'][$r]['id'] == $user_folder_name[$q]){
+
 							$return_array[] = array('id' => $current_user_options[0]['children'][$r]['id'], 'text' => $current_user_options[0]['children'][$r]['text'], 'preview' => str_replace(' ', '-', $current_user_options[0]['children'][$r]['preview']));
-							
-						}					
+
+						}
 					}
 
 				}
-								
+
 			}
 
 			return $return_array;
 		}
 
-		
+
 
 		/**
 		 * Get DB data and formats it so it can be used for the select2 select box.
