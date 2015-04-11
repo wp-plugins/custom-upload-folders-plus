@@ -37,7 +37,6 @@ The plugin option will be deleted via unsinstall.php.
 Version 1.0.2  
 Add: auto populate select2 dropdown with logged in user data  
 Add: drag sorting for logged in user data   
-Add/Bug Fix: works with multi-site now  
    
 
 Version 1.0.1  
