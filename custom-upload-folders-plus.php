@@ -196,11 +196,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			register_setting( 'media', 'jwcuf_file_types', array( $this, 'validate_file_types'));
 			register_setting( 'media', 'jwcuf_default_folder_name', array( $this, 'validate_folder_name_default') );
 
-
-			add_settings_field(
-				'jwcuf_settings',
-				__( 'Custom Upload Folders', 'jwcuf' ), array( $this, 'jwcuf_settings_page' ), 'media', 'uploads'
-			);
+			add_settings_field('jwcuf_settings', 'Custom Upload Folders', array( $this, 'jwcuf_settings_page' ), 'media');
 		}
 
 		/**
@@ -385,6 +381,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 							<?php endforeach; ?>
 						<?php endif; ?>
 					<?php endif ?>
+
 					</tbody>
 				</table>
 				<hr>
@@ -457,12 +454,13 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			if( $hook == "options-media.php" ){
 
-				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.css' );
+				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.min.css' );
 				wp_enqueue_style( 'styles-css',		$this->plugin_url . 'css/styles.css' );
-				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery'), '1.0.0', true );
+				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery','jquery-ui-sortable'), '1.0.0', true );				
 
-				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','select2-js'), '1.0.0', true );
+				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','jquery-ui-sortable','select2-js'), '1.0.0', true );
 				wp_localize_script( 'scripts-js',	'select2_user_data', $this->get_select2_user_data() );
+				wp_localize_script( 'scripts-js',	'select2_selected_user_data', $this->get_select2_selected_user_data());
 				wp_localize_script( 'scripts-js',	'select2_used_mime_types', $this->get_select2_used_mime_types());
 				wp_localize_script( 'scripts-js',	'select2_allowed_mime_types', $this->get_select2_allowed_mime_types());
 
@@ -520,24 +518,8 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public function get_select2_user_data(){
 
-			$current_user = wp_get_current_user();
-
 			// select2 select options for user data
-			$current_user_options = array(
-				array('text' => 'User Data', 'children' => 	array(
-						array('id' => 'user_login', 	'text' => __( 'Username', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->user_login)),
-						array('id' => 'user_firstname', 'text' => __( 'First Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_firstname)),
-						array('id' => 'user_lastname', 	'text' => __( 'Last Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_lastname)),
-						array('id' => 'display_name', 	'text' => __( 'Display Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->display_name)),
-						array('id' => 'nickname', 		'text' => __( 'Nick Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->nickname )),
-						array('id' => 'ID', 			'text' => __( 'User ID', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->ID)))
-				),
-				array('text' => 'Spacers', 'children' => 	array(
-						array('id' => 'dash', 		'text' => __( 'dash: -', 'jwcuf'),			'preview' => '-'),
-						array('id' => 'underscore', 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_'))
-				)
-			);
-
+			$current_user_options = $this->get_select2_user_data_array();
 
 			// remove any user data that is not present/empty in the Users -> your profile page
 			// if the user data is emty in the Users -> your profile page then this function take them out.
@@ -560,6 +542,75 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			return $current_user_options;
 		}
+
+		public function get_select2_user_data_array(){
+
+			$current_user = wp_get_current_user();
+			// select2 select options for user data
+			$return_array = array(
+				array('text' => 'User Data', 'children' => 	array(
+						array('id' => 'user_login', 	'text' => __( 'Username', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->user_login)),
+						array('id' => 'user_firstname', 'text' => __( 'First Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_firstname)),
+						array('id' => 'user_lastname', 	'text' => __( 'Last Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_lastname)),
+						array('id' => 'display_name', 	'text' => __( 'Display Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->display_name)),
+						array('id' => 'nickname', 		'text' => __( 'Nick Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->nickname )),
+						array('id' => 'ID', 			'text' => __( 'User ID', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->ID)))
+				),
+				array('text' => 'Spacers', 'children' => 	array(
+						array('id' => 'dash', 	  'text' => __( 'dash: -', 'jwcuf'),		'preview' => '-'),
+						array('id' => 'underscore', 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_'))
+				)
+			);
+
+			return $return_array;
+		}
+
+		/**
+		 * Gets selected logged in user data.
+		 * @param   none
+		 * @since   2015.02.1
+		 * @return  array
+		 */
+		public function get_select2_selected_user_data(){
+
+			$return_array = array();
+			$user_folder_name = (get_option( 'jwcuf_user_folder_name' )) ? explode( ',', get_option( 'jwcuf_user_folder_name' )) : array();
+			$current_user_options = $this->get_select2_user_data_array();
+			$dash_count = 0;
+			$underscore_count = 0;
+
+			for ($q = 0; $q < count($user_folder_name); $q++) { 
+
+				$dash = strstr($user_folder_name[$q],'dash');
+				$underscore = strstr($user_folder_name[$q],'underscore');
+
+				if ($dash) {
+					$return_array[] = array('id' => 'dash_'. $dash_count , 'text' => __( 'dash: -', 'jwcuf'), 'preview' => '-');
+					$dash_count++;
+					
+				}elseif($underscore){
+					$return_array[] = array('id' => 'underscore_' . $underscore_count, 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_');
+					$underscore_count++;
+					
+				}else {
+
+					for($r = 0; $r < count($current_user_options[0]['children']); $r++) {
+
+						if($current_user_options[0]['children'][$r]['id'] == $user_folder_name[$q]){						
+							
+							$return_array[] = array('id' => $current_user_options[0]['children'][$r]['id'], 'text' => $current_user_options[0]['children'][$r]['text'], 'preview' => str_replace(' ', '-', $current_user_options[0]['children'][$r]['preview']));
+							
+						}					
+					}
+
+				}
+								
+			}
+
+			return $return_array;
+		}
+
+		
 
 		/**
 		 * Get DB data and formats it so it can be used for the select2 select box.

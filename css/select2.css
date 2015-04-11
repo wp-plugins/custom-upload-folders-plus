@@ -562,6 +562,7 @@ html[dir="rtl"] .select2-container-multi .select2-choices li
     padding: 3px 5px 3px 18px;
     margin: 3px 0 3px 5px;
     position: relative;
+    height: 15px;
 
     line-height: 13px;
     color: #333;

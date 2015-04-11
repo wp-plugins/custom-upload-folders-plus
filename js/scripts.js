@@ -2,7 +2,8 @@
 	
 	var template = $('#jwcuf-template');
 	var list = $('#jwcuf-extension-list');
-	var count = 0;
+	var count = 100;// set count to a hundred, if select two id match they are removed from the dropdown, dont want that
+	var array_user_selected_data = select2_selected_user_data;
 	var array_user_data = select2_user_data;
 	var array_used_mime_types = select2_used_mime_types;
 	var array_allowed_mime_types = select2_allowed_mime_types;	
@@ -18,11 +19,12 @@
 	
 	function init(){
 
+		// CHECKS TO SEE IF THERE WAS A WP ERROR, IF THERE WAS THEN IT HIGHLIGHTS THE FEILDS SO THE USER CAN BETTER UNDERSTAND WHAT WRONG.
 		errors();
 		
 		array_allowed_mime_types = remove_from_array(array_allowed_mime_types, array_used_mime_types);
 	
-		// SELECT 
+		// SELECT 2
 		select_by.change(show_hide_sections);
 
 		select_allowed_mime_types.select2({
@@ -44,7 +46,6 @@
 			width: '100%',
 			dropdownAutoWidth: true,
 			multiple: true,
-
 			data: function() {
 				return {
 					results: array_user_data.sort(sortlist)
@@ -79,16 +80,25 @@
 		.on("select2-removed", function(e) {
 			array_user_data[0]['children'] = [];
 			array_user_data[0]['children'].push({
-				id: "underscore",
+				id: "underscore_" + count++,
 				text: "underscore : _",
 				preview: "_"
 			}, {
-				id: "dash",
+				id: "dash_" + count++,
 				text: "dash : -",
 				preview: "-"
 			});
 
 			set_display_path();
+		})
+
+		.select2('data', array_user_selected_data);
+
+		// ADD JQUERY SORTABLE
+		select_user.select2("container").find("ul.select2-choices").sortable({
+			containment: 'parent',
+			start: function() { select_user.select2("onSortStart"); },
+			update: function() { select_user.select2("onSortEnd"); set_display_path();}
 		});
 
 		//BTNS
@@ -175,7 +185,7 @@
 
 		for (var h = 0; h < $(data_data).length; h++) {
 			path_string += data_data[h].preview;
-			console.log(data_data[h].preview);
+			//console.log(data_data[h].preview);
 		};
 
 		text_folder_name.text(path_string.toLowerCase());
