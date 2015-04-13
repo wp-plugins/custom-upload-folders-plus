@@ -3,7 +3,7 @@
  * Plugin Name: Custom Upload Folders Plus
  * Plugin URI:
  * Description: Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname,first-name last-name...).
- * Version: 1.0.1
+ * Version: 1.0.3
  * Author: John Wight
  * Author URI: http://wight-space.com/
  * Text Domain: jwcuf
@@ -135,7 +135,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			if ($select != -1) {
 
 				$folder_default = (get_option( 'jwcuf_default_folder_name' )) ? get_option( 'jwcuf_default_folder_name' ) : 'general' ;
-				$uploads_use_yearmonth_folders  = get_option('uploads_use_yearmonth_folders ');
+				$uploads_use_yearmonth_folders  = get_option('uploads_use_yearmonth_folders');
 
 				switch( $select )
 				{
@@ -181,10 +181,14 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 					$path['path']   .= $custom_dir;
 					$path['url']    .= $custom_dir;
 				}
+
 			}
+
+			//print_r($path);
 
 			return $path;
 		}
+
 
 		/**
 		 * Add settings to wp-admin/options-general.php page
@@ -192,21 +196,55 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		public function register_fields()
 		{
 			register_setting( 'media', 'jwcuf_select', 'esc_attr' );
-			register_setting( 'media', 'jwcuf_user_folder_name', array( $this, 'validate_folder_builder') );
-			register_setting( 'media', 'jwcuf_file_types', array( $this, 'validate_file_types'));
-			register_setting( 'media', 'jwcuf_default_folder_name', array( $this, 'validate_folder_name_default') );
+			register_setting( 'media', 'jwcuf_user_folder_name', array( $this, 'jwcuf_validate_folder_builder') );
+			register_setting( 'media', 'jwcuf_file_types', array( $this, 'jwcuf_validate_file_types'));
+			register_setting( 'media', 'jwcuf_default_folder_name', array( $this, 'jwcuf_validate_folder_name_default') );
 
+			if ( is_multisite() )
+			{
+				register_setting( 'media', 'jwcuf_uploads_use_yearmonth_folders', array( $this, 'jwcuf_validate_uploads_use_yearmonth_folders') );
 
-			add_settings_field(
-				'jwcuf_settings',
-				__( 'Custom Upload Folders', 'jwcuf' ), array( $this, 'jwcuf_settings_page' ), 'media', 'uploads'
-			);
+				add_settings_section(
+					'jwcuf_setting_section_uploads',
+					'Uploading Files',
+					 array( $this,'jwcuf_setting_section'),
+					'media'
+				);
+
+				add_settings_field('jwcuf_settings', 'Custom Upload Folders', array( $this, 'jwcuf_settings_page' ), 'media', 'jwcuf_setting_section_uploads');
+
+			}else {
+				add_settings_field('jwcuf_settings', 'Custom Upload Folders', array( $this, 'jwcuf_settings_page' ), 'media', 'uploads');
+			}
+
 		}
+
+		/**
+		 * update checking upload use yearmonth folder
+		 */
+		public function jwcuf_validate_uploads_use_yearmonth_folders($input){
+			$ret_val = ($input == 1) ? 1 : 0 ;
+			update_option('uploads_use_yearmonth_folders', $ret_val);
+
+			return $input;
+		}
+
+		/**
+		 * update checking upload use yearmonth folder
+		 */
+		public function jwcuf_validate_use_blogname_folders($input){
+
+			return $input;
+
+		}
+
+
+
 
 		/**
 		 * Error checking for file type feilds
 		 */
-		public function validate_folder_builder($input){
+		public function jwcuf_validate_folder_builder($input){
 
 			$select = get_option( 'jwcuf_select' );
 
@@ -220,7 +258,6 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 						'error'
 					);
 				}
-
 				if ($input == "underscore" || $input == "dash") {
 					add_settings_error(
 						'jwcuf_validate_folder_builder_input',
@@ -235,7 +272,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 		}
 
-		public function validate_folder_name_default($input){
+		public function jwcuf_validate_folder_name_default($input){
 
 			$select = get_option( 'jwcuf_select' );
 
@@ -258,7 +295,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		/**
 		 * Error checking for file type feilds
 		 */
-		public function validate_file_types($input){
+		public function jwcuf_validate_file_types($input){
 
 
 			$select = get_option( 'jwcuf_select' );
@@ -281,11 +318,36 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 		}
 
+		/**
+		 * Settings Section Multisite Media upload
+		 * Also added "Organize my uploads into month- and year-based folders" check box
+		 */
+		public function jwcuf_setting_section($arg)
+		{
+
+			$checkbox = checked( get_option( 'uploads_use_yearmonth_folders' ), 1, false );
+			$checkbox2 = checked( get_option( 'jwcuf_use_blogname_folders' ), 1, false );
+
+			?>
+			<table class="form-table">
+			<tbody>
+				<tr>
+					<th scope="row" colspan="2" class="th-full">
+						<label for="jwcuf_uploads_use_yearmonth_folders">
+						<input name="jwcuf_uploads_use_yearmonth_folders" type="checkbox" id="uploads_use_yearmonth_folders" value="1" <?php echo $checkbox; ?>>Organize my uploads into month- and year-based folders</label>
+					</th>
+				</tr>
+			</tbody>
+			</table>
+
+			<?php
+		}
+
 
 		/**
 		 * Settings Options
 		 */
-		public function jwcuf_settings_page ()
+		public function jwcuf_settings_page()
 		{
 			$select = get_option( 'jwcuf_select' );
 			$folder_name = get_option( 'jwcuf_user_folder_name' );
@@ -305,6 +367,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			?>
 
 			<select id="jwcuf-select" name="jwcuf_select">
+
 			<?php foreach( $select_options as $key => $value ): $selected = selected( $key, $select, false );?>
 				<option value="<?php echo $key; ?>" <?php echo $selected; ?> ><?php echo $value; ?></option>
 			<?php endforeach; ?>
@@ -312,7 +375,6 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			</select>
 
 			<div id="jwcuf-by-user-group" class="<?php echo $show_hide_by_user; ?>">
-
 				<table id="jwcuf-by-user-input" class="jwcuf-table widefat">
 					<tbody>
 						<tr>
@@ -385,6 +447,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 							<?php endforeach; ?>
 						<?php endif; ?>
 					<?php endif ?>
+
 					</tbody>
 				</table>
 				<hr>
@@ -457,12 +520,13 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			if( $hook == "options-media.php" ){
 
-				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.css' );
+				wp_enqueue_style( 'select2-css',	$this->plugin_url . 'css/select2.min.css' );
 				wp_enqueue_style( 'styles-css',		$this->plugin_url . 'css/styles.css' );
-				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery'), '1.0.0', true );
+				wp_enqueue_script( 'select2-js',	$this->plugin_url . 'js/select2.js', array('jquery','jquery-ui-sortable'), '1.0.0', true );
 
-				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','select2-js'), '1.0.0', true );
+				wp_register_script( 'scripts-js',	$this->plugin_url . 'js/scripts.js', array('jquery','jquery-ui-sortable','select2-js'), '1.0.0', true );
 				wp_localize_script( 'scripts-js',	'select2_user_data', $this->get_select2_user_data() );
+				wp_localize_script( 'scripts-js',	'select2_selected_user_data', $this->get_select2_selected_user_data());
 				wp_localize_script( 'scripts-js',	'select2_used_mime_types', $this->get_select2_used_mime_types());
 				wp_localize_script( 'scripts-js',	'select2_allowed_mime_types', $this->get_select2_allowed_mime_types());
 
@@ -520,24 +584,8 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public function get_select2_user_data(){
 
-			$current_user = wp_get_current_user();
-
 			// select2 select options for user data
-			$current_user_options = array(
-				array('text' => 'User Data', 'children' => 	array(
-						array('id' => 'user_login', 	'text' => __( 'Username', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->user_login)),
-						array('id' => 'user_firstname', 'text' => __( 'First Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_firstname)),
-						array('id' => 'user_lastname', 	'text' => __( 'Last Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_lastname)),
-						array('id' => 'display_name', 	'text' => __( 'Display Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->display_name)),
-						array('id' => 'nickname', 		'text' => __( 'Nick Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->nickname )),
-						array('id' => 'ID', 			'text' => __( 'User ID', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->ID)))
-				),
-				array('text' => 'Spacers', 'children' => 	array(
-						array('id' => 'dash', 		'text' => __( 'dash: -', 'jwcuf'),			'preview' => '-'),
-						array('id' => 'underscore', 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_'))
-				)
-			);
-
+			$current_user_options = $this->get_select2_user_data_array();
 
 			// remove any user data that is not present/empty in the Users -> your profile page
 			// if the user data is emty in the Users -> your profile page then this function take them out.
@@ -560,6 +608,75 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			return $current_user_options;
 		}
+
+		public function get_select2_user_data_array(){
+
+			$current_user = wp_get_current_user();
+			// select2 select options for user data
+			$return_array = array(
+				array('text' => 'User Data', 'children' => 	array(
+						array('id' => 'user_login', 	'text' => __( 'Username', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->user_login)),
+						array('id' => 'user_firstname', 'text' => __( 'First Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_firstname)),
+						array('id' => 'user_lastname', 	'text' => __( 'Last Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->user_lastname)),
+						array('id' => 'display_name', 	'text' => __( 'Display Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->display_name)),
+						array('id' => 'nickname', 		'text' => __( 'Nick Name', 'jwcuf'),	'preview' => str_replace(' ', '-', $current_user->nickname )),
+						array('id' => 'ID', 			'text' => __( 'User ID', 'jwcuf'),		'preview' => str_replace(' ', '-', $current_user->ID)))
+				),
+				array('text' => 'Spacers', 'children' => 	array(
+						array('id' => 'dash', 	  'text' => __( 'dash: -', 'jwcuf'),		'preview' => '-'),
+						array('id' => 'underscore', 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_'))
+				)
+			);
+
+			return $return_array;
+		}
+
+		/**
+		 * Gets selected logged in user data.
+		 * @param   none
+		 * @since   2015.02.1
+		 * @return  array
+		 */
+		public function get_select2_selected_user_data(){
+
+			$return_array = array();
+			$user_folder_name = (get_option( 'jwcuf_user_folder_name' )) ? explode( ',', get_option( 'jwcuf_user_folder_name' )) : array();
+			$current_user_options = $this->get_select2_user_data_array();
+			$dash_count = 0;
+			$underscore_count = 0;
+
+			for ($q = 0; $q < count($user_folder_name); $q++) {
+
+				$dash = strstr($user_folder_name[$q],'dash');
+				$underscore = strstr($user_folder_name[$q],'underscore');
+
+				if ($dash) {
+					$return_array[] = array('id' => 'dash_'. $dash_count , 'text' => __( 'dash: -', 'jwcuf'), 'preview' => '-');
+					$dash_count++;
+
+				}elseif($underscore){
+					$return_array[] = array('id' => 'underscore_' . $underscore_count, 'text' => __( 'underscore: _', 'jwcuf'),	'preview' => '_');
+					$underscore_count++;
+
+				}else {
+
+					for($r = 0; $r < count($current_user_options[0]['children']); $r++) {
+
+						if($current_user_options[0]['children'][$r]['id'] == $user_folder_name[$q]){
+
+							$return_array[] = array('id' => $current_user_options[0]['children'][$r]['id'], 'text' => $current_user_options[0]['children'][$r]['text'], 'preview' => str_replace(' ', '-', $current_user_options[0]['children'][$r]['preview']));
+
+						}
+					}
+
+				}
+
+			}
+
+			return $return_array;
+		}
+
+
 
 		/**
 		 * Get DB data and formats it so it can be used for the select2 select box.
