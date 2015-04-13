@@ -3,7 +3,7 @@ Contributors: John Wight
 Tags: media, upload, folder, custom upload folders
 Requires at least: 3.8
 Tested up to: 4.1
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 
 Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname, first-name, last-name...).
@@ -34,10 +34,12 @@ The plugin option will be deleted via unsinstall.php.
 
 == Changelog ==
 
+Version 1.0.3    
+BugFix: Fix Multisite
+
 Version 1.0.2  
 Add: auto populate select2 dropdown with logged in user data  
 Add: drag sorting for logged in user data   
-Add/Bug Fix: works with multi-site now  
    
 
 Version 1.0.1  
