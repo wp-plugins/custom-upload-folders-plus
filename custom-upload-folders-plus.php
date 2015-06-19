@@ -3,7 +3,7 @@
  * Plugin Name: Custom Upload Folders Plus
  * Plugin URI:
  * Description: Organize file uploads by File Type (mov, gif, png, mp3...) and Logged in user (nickname,first-name last-name...).
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: John Wight
  * Author URI: http://wight-space.com/
  * Text Domain: jwcuf
@@ -60,16 +60,11 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			$this->plugin_path	= plugin_dir_path( __FILE__ );
 			$this->plugin_slug	= dirname( plugin_basename( __FILE__ ) );
 			$this->upload_dir 	= wp_upload_dir();
-			//$this->load_language( 'jwcuf' );
+			//$this->load_language( 'jwcuf' ); /will b adding soon
 
 			add_filter(
-				'wp_handle_upload_prefilter',
-				array( $this, 'handle_upload_prefilter' )
-			);
-			add_filter(
-				'wp_handle_upload',
-				array( $this, 'handle_upload' )
-			);
+				'upload_dir',
+				array( $this, 'custom_upload_dir'), 10, 1 );
 
 			add_filter(
 				'admin_init' ,
@@ -88,33 +83,6 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 		}
 
-
-		/**
-		 * CUSTOM UPLOAD DIR
-		 * Change upload folder
-		 *
-		 * @param type $file
-		 * @return type
-		 */
-		public function handle_upload_prefilter( $file )
-		{
-			add_filter( 'upload_dir', array($this, 'custom_upload_dir') );
-			return $file;
-		}
-
-
-		/**
-		 * CUSTOM UPLOAD DIR
-		 * Remove upload folder filter
-		 *
-		 * @param type $fileinfo
-		 * @return type
-		 */
-		public function handle_upload( $fileinfo )
-		{
-			remove_filter('upload_dir', array($this, 'custom_upload_dir') );
-			return $fileinfo;
-		}
 		/**
 		 * CUSTOM UPLOAD DIR
 		 * Organize the Uploads Folder
@@ -184,8 +152,6 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 
 			}
 
-			//print_r($path);
-
 			return $path;
 		}
 
@@ -237,9 +203,6 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 			return $input;
 
 		}
-
-
-
 
 		/**
 		 * Error checking for file type feilds
@@ -349,6 +312,7 @@ if (!class_exists('Custom_Upload_Folders_Plus')) {
 		 */
 		public function jwcuf_settings_page()
 		{
+
 			$select = get_option( 'jwcuf_select' );
 			$folder_name = get_option( 'jwcuf_user_folder_name' );
 			$folder_name_default = get_option( 'jwcuf_default_folder_name' );
